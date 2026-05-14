@@ -32,11 +32,11 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         endif()
     endif()
 
-    add_compile_options(-Wall -Wextra -Wpedantic -O3 -march=native)
+    add_compile_options(-Wall -Wextra -Wpedantic -Og -march=native)
 
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     message(STATUS "Configuring for GCC...")
-    add_compile_options(-Wall -Wextra -Wpedantic -O3 -march=native)
+    add_compile_options(-Wall -Wextra -Wpedantic -Og -march=native)
     # GCC uses libstdc++ by default and doesn't need special rpaths usually
 endif()
 
