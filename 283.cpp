@@ -6,15 +6,19 @@ using namespace std;
 class Solution {
 public:
   void moveZeroes(vector<int> &nums) {
-    if (nums.empty()) {
-      return;
+    size_t first = 0;
+    for (; first < nums.size() && nums[first] != 0; ++first) {
     }
-    auto find_not_zero = [](const auto &num) { return num != 0; };
-    for (auto first = find(nums.begin(), nums.end(), 0),
-              second = find_if(first, nums.end(), find_not_zero);
-         second < nums.cend(); first = find(first + 1, nums.end(), 0),
-              second = find_if(first, nums.end(), find_not_zero)) {
-      swap(*first, *second);
+    size_t second = first + 1;
+    for (; second < nums.size() && nums[second] == 0; ++second) {
+    }
+
+    for (; second < nums.size();) {
+      swap(nums[first], nums[second]);
+      for (; first < nums.size() && nums[first] != 0; ++first) {
+      }
+      for (; second < nums.size() && nums[second] == 0; ++second) {
+      }
     }
   }
 };

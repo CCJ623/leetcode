@@ -9,15 +9,18 @@ class Solution {
 public:
   vector<vector<string>> groupAnagrams(vector<string> &strs) {
     unordered_map<string, vector<string>> hash_table;
-    for (auto &str : strs) {
+    for (const auto &str : strs) {
       auto sorted_str = str;
-      sort(sorted_str.begin(), sorted_str.end());
-      hash_table[sorted_str].push_back(str);
+      ranges::sort(sorted_str);
+      hash_table[sorted_str].emplace_back(str);
     }
+
     vector<vector<string>> result;
-    for (auto &[sorted, strs] : hash_table) {
-      result.push_back(std::move(strs));
+    result.reserve(strs.size());
+    for (auto &[key, value] : hash_table) {
+      result.emplace_back(std::move(value));
     }
+
     return result;
   }
 };

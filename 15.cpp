@@ -13,43 +13,36 @@ public:
       return {};
     }
 
-    std::sort(nums.begin(), nums.end());
     vector<vector<int>> result;
-
+    ranges::sort(nums);
     for (size_t i = 0; i < nums.size() - 2;) {
-      if (nums[i] > 0) {
+      auto curr_num = nums[i];
+      if (curr_num > 0) {
         break;
       }
 
-      auto curr_num = nums[i];
       size_t left = i + 1;
       size_t right = nums.size() - 1;
-      while (left < right) {
+      auto target_num = 0 - curr_num;
+      for (; left < right;) {
         auto left_num = nums[left];
         auto right_num = nums[right];
-        if (right_num < 0) {
-          break;
-        }
-
-        auto sum = curr_num + left_num + right_num;
-        if (sum == 0) {
+        if (left_num + right_num == target_num) {
           result.push_back({curr_num, left_num, right_num});
-          for (; left < right && nums[left] == left_num; ++left)
+          for (; nums[left] == left_num && left < right; ++left)
             ;
-          for (; left < right && nums[right] == right_num; --right)
+          for (; nums[right] == right_num && left < right; --right)
             ;
-        } else if (sum > 0) {
-          for (; left < right && nums[right] == right_num; --right)
-            ;
+        } else if (left_num + right_num < target_num) {
+          ++left;
         } else {
-          // sum < 0
-          for (; left < right && nums[left] == left_num; ++left)
-            ;
+          --right;
         }
       }
 
-      for (; i < nums.size() - 2 && nums[i] == curr_num; ++i)
+      for (; nums[i] == curr_num && i < nums.size() - 2; ++i)
         ;
+      ;
     }
 
     return result;

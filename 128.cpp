@@ -1,4 +1,5 @@
 #include <set>
+#include <unordered_set>
 #include <vector>
 
 using namespace std;
@@ -6,18 +7,19 @@ using namespace std;
 class Solution {
 public:
   int longestConsecutive(vector<int> &nums) {
-    set<int> s{nums.cbegin(), nums.cend()};
+    unordered_set<int> hash_set{nums.begin(), nums.end()};
     int result = 0;
-    for (auto num : s) {
-      if (s.contains(num - 1)) {
+    for (const auto &num : hash_set) {
+      if (hash_set.contains(num - 1)) {
         continue;
       }
-      int current = 1;
-      while (s.contains(++num)) {
-        ++current;
+
+      auto next = num + 1;
+      for (; hash_set.contains(next); ++next) {
       }
-      result = max(result, current);
+      result = max(result, next - num);
     }
+
     return result;
   }
 };
