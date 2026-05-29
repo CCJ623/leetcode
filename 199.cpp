@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <queue>
 
 using namespace std;
@@ -20,21 +21,20 @@ public:
     }
 
     vector<int> result;
-    queue<TreeNode *> current_level{};
-    queue<TreeNode *> next_level{};
-    next_level.push(root);
-
-    while (!next_level.empty()) {
-      swap(current_level, next_level);
-      result.push_back(current_level.front()->val);
-      while (!current_level.empty()) {
-        auto node = current_level.front();
-        current_level.pop();
+    queue<TreeNode *> q;
+    q.push(root);
+    while (!q.empty()) {
+      result.push_back(q.front()->val);
+      auto queue_size = q.size();
+      for (size_t i = 0; i < queue_size; ++i) {
+        auto node = q.front();
+        q.pop();
         if (node->right != nullptr) {
-          next_level.push(node->right);
+          q.push(node->right);
         }
+
         if (node->left != nullptr) {
-          next_level.push(node->left);
+          q.push(node->left);
         }
       }
     }

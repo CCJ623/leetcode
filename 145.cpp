@@ -29,14 +29,15 @@ public:
         s.push(root);
         root = root->left;
       }
+
       root = s.top();
-      if (previous == root->right || root->right == nullptr) {
-        result.push_back(root->val);
-        s.pop();
-        previous = root;
-        root = nullptr;
-      } else {
+      if (previous != root->right && root->right != nullptr) {
         root = root->right;
+      } else {
+        result.push_back(root->val);
+        previous = root;
+        s.pop();
+        root = nullptr;
       }
     }
 

@@ -10,27 +10,17 @@ public:
       return 0;
     }
 
-    int result = 1;
     unordered_set<char> set;
-    set.insert(s.front());
-
-    for (auto first = s.cbegin(), last = first + 1;;) {
-      if (last == s.cend()) {
-        result = max(result, static_cast<int>(last - first));
-        break;
-      }
-      char ch = *last;
+    int result = 0;
+    for (size_t left = 0, right = 0; right < s.size();) {
+      auto ch = s[right];
       if (set.contains(ch)) {
-        result = max(result, static_cast<int>(last - first));
-        while (*first != ch) {
-          set.erase(*first);
-          ++first;
-        }
-        set.erase(*first);
-        ++first;
+        set.erase(s[left]);
+        ++left;
       } else {
+        result = max(result, static_cast<int>(right - left + 1));
         set.insert(ch);
-        ++last;
+        ++right;
       }
     }
 

@@ -17,23 +17,19 @@ struct TreeNode {
 class Solution {
 public:
   vector<int> preorderTraversal(TreeNode *root) {
-    if (root == nullptr) {
-      return {};
-    }
-
     vector<int> result;
-    stack<TreeNode *> s;
-    s.push(root);
-    while (!s.empty()) {
-      root = s.top();
-      s.pop();
-      result.push_back(root->val);
-      if (root->right != nullptr) {
-        s.push(root->right);
+    stack<TreeNode *> stk;
+    stk.push(root);
+    while (!stk.empty()) {
+      auto node = stk.top();
+      stk.pop();
+      if (node == nullptr) {
+        continue;
       }
-      if (root->left != nullptr) {
-        s.push(root->left);
-      }
+
+      result.push_back(node->val);
+      stk.push(node->right);
+      stk.push(node->left);
     }
 
     return result;
