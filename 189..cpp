@@ -11,12 +11,9 @@ public:
       return;
     }
 
-    auto nums_span = span{nums};
-    auto target_pos = (k % nums.size());
-    ranges::reverse(nums);
-    auto first_span = nums_span.subspan(0, target_pos);
-    auto second_span = nums_span.subspan(target_pos);
-    ranges::reverse(first_span);
-    ranges::reverse(second_span);
+    reverse(nums.begin(), nums.end());
+    auto separator = k % nums.size();
+    reverse(nums.begin(), nums.begin() + separator);
+    reverse(nums.begin() + separator, nums.end());
   }
 };

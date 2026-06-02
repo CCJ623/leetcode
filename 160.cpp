@@ -8,7 +8,12 @@ struct ListNode {
 class Solution {
 public:
   ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
-    auto first = headA, second = headB;
+    if (headA == nullptr || headB == nullptr) {
+      return nullptr;
+    }
+
+    auto first = headA;
+    auto second = headB;
     while (first != second) {
       if (first->next == nullptr && second->next == nullptr) {
         return nullptr;
@@ -19,7 +24,6 @@ public:
       } else {
         first = first->next;
       }
-
       if (second->next == nullptr) {
         second = headA;
       } else {

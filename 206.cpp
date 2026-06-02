@@ -15,8 +15,8 @@ public:
     }
 
     ListNode *first = nullptr;
-    auto second = head;
-    for (; second != nullptr;) {
+    ListNode *second = head;
+    while (second) {
       auto temp = second->next;
       second->next = first;
       first = second;

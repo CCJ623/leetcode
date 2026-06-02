@@ -11,32 +11,30 @@ struct ListNode {
 class Solution {
 public:
   ListNode *mergeTwoLists(ListNode *list1, ListNode *list2) {
-    if (list1 == nullptr) {
-      return list2;
-    }
-    if (list2 == nullptr) {
-      return list1;
-    }
-
-    ListNode head{std::numeric_limits<int>::min()};
-    auto tail = &head;
-    auto first = list1;
-    auto second = list2;
-
-    for (; first != nullptr && second != nullptr; tail = tail->next) {
-      if (first->val < second->val) {
-        tail->next = first;
-        first = first->next;
-      } else {
-        tail->next = second;
-        second = second->next;
+    ListNode head;
+    ListNode *curr = &head;
+    while (true) {
+      if (!list1 && !list2) {
+        break;
       }
-    }
 
-    if (first != nullptr) {
-      tail->next = first;
-    } else if (second != nullptr) {
-      tail->next = second;
+      if (list1 && list2) {
+        if (list1->val < list2->val) {
+          curr->next = list1;
+          list1 = list1->next;
+        } else {
+          curr->next = list2;
+          list2 = list2->next;
+        }
+      } else if (list1) {
+        curr->next = list1;
+        list1 = list1->next;
+      } else {
+        curr->next = list2;
+        list2 = list2->next;
+      }
+
+      curr = curr->next;
     }
 
     return head.next;

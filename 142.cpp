@@ -8,22 +8,27 @@ struct ListNode {
 class Solution {
 public:
   ListNode *detectCycle(ListNode *head) {
-    if (head == nullptr || head->next == nullptr ||
-        head->next->next == nullptr) {
+    if (!head || !head->next || !head->next->next) {
       return nullptr;
     }
 
-    auto slow = head->next, fast = head->next->next;
-    // first meet
-    for (; slow != fast; slow = slow->next, fast = fast->next->next) {
-      if (fast->next == nullptr || fast->next->next == nullptr) {
+    auto slow = head->next;
+    auto fast = head->next->next;
+    while (slow != fast) {
+      if (!fast->next || !fast->next->next) {
         return nullptr;
       }
+
+      slow = slow->next;
+      fast = fast->next->next;
     }
-    // second meet
+
     fast = head;
-    for (; slow != fast; slow = slow->next, fast = fast->next) {
+    while (slow != fast) {
+      slow = slow->next;
+      fast = fast->next;
     }
-    return fast;
+
+    return slow;
   }
 };

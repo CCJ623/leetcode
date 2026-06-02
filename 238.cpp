@@ -1,3 +1,5 @@
+#include <cstddef>
+#include <limits>
 #include <ranges>
 #include <vector>
 
@@ -6,36 +8,30 @@ using namespace std;
 class Solution {
 public:
   vector<int> productExceptSelf(vector<int> &nums) {
-    if (nums.empty()) {
-      return {};
+    vector<int> prefix(nums.size());
+    vector<int> suffix(nums.size());
+
+    int temp = 1;
+    for (size_t i = 0; i < nums.size(); ++i) {
+      temp *= nums[i];
+      prefix[i] = temp;
+    }
+    temp = 1;
+    for (size_t i = 0; i < nums.size(); ++i) {
+      temp *= nums[nums.size() - i - 1];
+      suffix[nums.size() - i - 1] = temp;
     }
 
     vector<int> result;
-    int temp = 1;
-
-    // calculate left prefix and store in result
-    for (const auto &num : nums) {
-      temp *= num;
-      result.push_back(temp);
+    for (size_t i = 0; i < nums.size(); ++i) {
+      auto left_index = i - 1;
+      auto right_index = i + 1;
+      result.push_back((left_index == numeric_limits<size_t>::max()
+                            ? 1
+                            : prefix[left_index]) *
+                       (right_index >= nums.size() ? 1 : suffix[right_index]));
     }
-
-    // calculate result, store current right prefix in temp
-    temp = 1;
-    for (const auto &[index, num] :
-         std::views::zip(ranges::views::iota(0), nums) | std::views::reverse) {
-      if (index > 0) {
-        result[index] = temp * result[index - 1];
-        temp *= num;
-      }
-    }
-    // last one
-    result.front() = temp;
 
     return result;
   }
 };
-
-int main() {
-  vector<int> nums = {1, 2, 3};
-  Solution{}.productExceptSelf(nums);
-}

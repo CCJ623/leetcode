@@ -11,22 +11,25 @@ public:
     }
 
     ranges::sort(intervals, [](const auto &lhs, const auto &rhs) {
-      return lhs.front() < rhs.front();
+      return lhs[0] < rhs[0];
     });
+
     vector<vector<int>> result;
-    auto left = intervals.front().front();
-    auto right = intervals.front().back();
+    auto left = intervals.front()[0];
+    auto right = intervals.front()[1];
     for (const auto &interval : intervals) {
-      if (interval.front() <= right) {
-        right = max(right, interval.back());
+      auto interval_left = interval[0];
+      auto interval_right = interval[1];
+      if (interval_left <= right) {
+        right = max(right, interval_right);
       } else {
         result.push_back({left, right});
-        left = interval.front();
-        right = interval.back();
+        left = interval_left;
+        right = interval_right;
       }
     }
-
     result.push_back({left, right});
+
     return result;
   }
 };

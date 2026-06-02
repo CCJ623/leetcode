@@ -12,14 +12,17 @@ public:
       return false;
     }
 
-    for (auto slow = head, fast = slow->next;;
-         slow = slow->next, fast = fast->next->next) {
+    auto slow = head;
+    auto fast = head->next;
+    while (slow != fast) {
       if (fast->next == nullptr || fast->next->next == nullptr) {
         return false;
       }
-      if (fast == slow) {
-        return true;
-      }
+
+      slow = slow->next;
+      fast = fast->next->next;
     }
+
+    return true;
   }
 };

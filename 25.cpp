@@ -8,42 +8,44 @@ struct ListNode {
 };
 
 class Solution {
-  auto Reverse(ListNode *head, ListNode *tail) -> ListNode * {
-    auto first = head, second = head->next;
-    for (; second != tail;) {
+public:
+  ListNode *reverseKGroup(ListNode *head, int k) {
+    if (!head) {
+      return nullptr;
+    }
+
+    ListNode dummy_head;
+    auto previous = &dummy_head;
+    while (true) {
+      auto tail = head;
+      for (int i = 0; i < k; ++i) {
+        if (!tail) {
+          return dummy_head.next;
+        }
+
+        tail = tail->next;
+      }
+
+      previous->next = reverse(head, tail);
+      previous = head;
+      head->next = tail;
+      head = tail;
+    }
+
+    return dummy_head.next;
+  }
+
+private:
+  ListNode *reverse(ListNode *head, ListNode *tail) {
+    ListNode *first = nullptr;
+    auto second = head;
+    while (second != tail) {
       auto temp = second->next;
       second->next = first;
-
       first = second;
       second = temp;
     }
 
     return first;
-  }
-
-public:
-  ListNode *reverseKGroup(ListNode *head, int k) {
-    if (head == nullptr) {
-      return nullptr;
-    }
-
-    ListNode dummy_head{0, head};
-    auto previous = &dummy_head;
-
-    while (true) {
-      // find tail
-      auto tail = previous->next;
-      for (int i = 0; i < k; ++i) {
-        if (tail == nullptr) {
-          return dummy_head.next;
-        }
-        tail = tail->next;
-      }
-
-      auto old_head = previous->next;
-      previous->next = Reverse(previous->next, tail);
-      old_head->next = tail;
-      previous = old_head;
-    }
   }
 };

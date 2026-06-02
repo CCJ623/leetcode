@@ -6,19 +6,15 @@ using namespace std;
 class Solution {
 public:
   int maxSubArray(vector<int> &nums) {
-    if (nums.empty()) {
-      return {};
-    }
-
     int result = numeric_limits<int>::min();
-    int current_result = 0;
+    int min_prefix = 0;
+    int sum = 0;
     for (const auto &num : nums) {
-      if (current_result > 0) {
-        current_result += num;
-      } else {
-        current_result = num;
+      sum += num;
+      result = max(result, sum - min_prefix);
+      if (sum < min_prefix) {
+        min_prefix = sum;
       }
-      result = max(result, current_result);
     }
 
     return result;

@@ -6,21 +6,16 @@ using namespace std;
 class Solution {
 public:
   int firstMissingPositive(vector<int> &nums) {
-    if (nums.empty()) {
-      return 1;
-    }
-
-    auto nums_with_index = ranges::views::zip(ranges::views::iota(0), nums);
-    for (auto [index, num] : nums_with_index) {
-      while (0 < num && num <= static_cast<int>(nums.size()) &&
+    for (auto &num : nums) {
+      while (1 <= num && num <= static_cast<int>(nums.size()) &&
              nums[num - 1] != num) {
-        swap(nums[num - 1], num);
+        swap(num, nums[num - 1]);
       }
     }
 
-    for (const auto &[index, num] : nums_with_index) {
-      if (num != index + 1) {
-        return index + 1;
+    for (size_t i = 0; i < nums.size(); ++i) {
+      if (nums[i] != static_cast<int>(i + 1)) {
+        return i + 1;
       }
     }
 

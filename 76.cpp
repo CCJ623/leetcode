@@ -1,69 +1,61 @@
-#include <array>
 #include <cstddef>
-#include <iterator>
+#include <limits>
 #include <string>
-#include <string_view>
+#include <unordered_map>
 
 using namespace std;
 
 class Solution {
 public:
   string minWindow(string s, string t) {
-    if (s.empty() || t.empty() || s.size() < t.size()) {
-      return {};
+    if (s.size() < t.size()) {
+      return "";
     }
 
-    array<size_t, 128> target_count;
-    target_count.fill(0);
-    array<size_t, 128> window_count;
-    window_count.fill(0);
-
+    size_t result_left = numeric_limits<size_t>::max();
+    size_t result_right = numeric_limits<size_t>::max();
+    unordered_map<char, size_t> t_count;
     for (const auto &ch : t) {
-      ++target_count[ch];
+      t_count[ch] += 1;
     }
+    unordered_map<char, size_t> window_count;
 
-    size_t need_count = t.size();
-    auto left = s.cbegin();
-    auto right = s.cbegin();
-    while (need_count > 0) {
-      if (right >= s.cend()) {
-        return {};
-      }
-      if (window_count[*right] < target_count[*right]) {
-        --need_count;
-      }
-      ++window_count[*right];
-      ++right;
-    }
-
-    string_view result{left, right};
-    while (right <= s.cend()) {
-      if (need_count > 0) {
-        if (window_count[*right] < target_count[*right]) {
-          --need_count;
+    auto varify = [&t_count, &window_count]() {
+      for (const auto &[ch, count] : t_count) {
+        if (!window_count.contains(ch) || window_count[ch] < count) {
+          return false;
         }
-        ++window_count[*right];
-        ++right;
+      }
+      return true;
+    };
+
+    window_count[s.front()] += 1;
+    for (size_t left = 0, right = 0;;) {
+      if (varify()) {
+        if (result_left == numeric_limits<size_t>::max() ||
+            result_right == numeric_limits<size_t>::max() ||
+            right - left < result_right - result_left) {
+          result_left = left;
+          result_right = right;
+        }
+
+        window_count[s[left]] -= 1;
+        ++left;
         continue;
       }
 
-      auto left_char = *left;
-      if (--window_count[left_char] < target_count[left_char]) {
-        ++need_count;
+      ++right;
+      if (right >= s.size()) {
+        break;
       }
-      ++left;
-      if (need_count == 0 &&
-          distance(left, right) < static_cast<long>(result.size())) {
-        result = {left, right};
-      }
+      window_count[s[right]] += 1;
     }
 
-    return string{result};
+    if (result_left == numeric_limits<size_t>::max() ||
+        result_right == numeric_limits<size_t>::max()) {
+      return "";
+    }
+
+    return s.substr(result_left, result_right - result_left + 1);
   }
 };
-
-int main() {
-  string s = "ab";
-  string t = "a";
-  Solution{}.minWindow(s, t);
-}

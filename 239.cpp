@@ -1,5 +1,5 @@
+#include <cstddef>
 #include <deque>
-#include <type_traits>
 #include <vector>
 
 using namespace std;
@@ -10,35 +10,39 @@ public:
     if (static_cast<int>(nums.size()) < k) {
       return {};
     }
+
+    // store index
+    deque<size_t> dq;
+    for (size_t i = 0; static_cast<int>(i) < k; ++i) {
+      if (dq.empty()) {
+        dq.push_back(i);
+        continue;
+      }
+
+      while (!dq.empty() && nums[dq.back()] <= nums[i]) {
+        dq.pop_back();
+      }
+      dq.push_back(i);
+    }
+
     vector<int> result;
-    result.reserve(nums.size() - k + 1);
-    deque<decay_t<decltype(nums)>::const_iterator> d;
-    for (auto right = nums.cbegin(); right < nums.cend(); ++right) {
-      auto left = right - k;
-      // pop left
-      if (left >= nums.cbegin() && left == d.front()) {
-        d.pop_front();
-      }
+    for (size_t left = 0, right = left + k - 1;;) {
+      result.push_back(nums[dq.front()]);
 
-      // pop num < right
-      while (!d.empty() && *d.back() <= *right) {
-        d.pop_back();
+      if (dq.front() == left) {
+        dq.pop_front();
       }
-
-      // push right
-      d.push_back(right);
-
-      if (right >= nums.cbegin() + k - 1) {
-        result.push_back(*d.front());
+      ++left;
+      ++right;
+      if (right >= nums.size()) {
+        break;
       }
+      while (!dq.empty() && nums[dq.back()] <= nums[right]) {
+        dq.pop_back();
+      }
+      dq.push_back(right);
     }
 
     return result;
   }
 };
-
-int main() {
-  vector<int> nums = {1, 3, -1, -3, 5, 3, 6, 7};
-  int k = 3;
-  Solution{}.maxSlidingWindow(nums, k);
-}

@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <iterator>
 #include <string>
 #include <unordered_map>
@@ -8,34 +9,43 @@ using namespace std;
 class Solution {
 public:
   vector<int> findAnagrams(string s, string p) {
-    if (s.empty() || p.empty() || s.size() < p.size()) {
+    if (s.size() < p.size()) {
       return {};
-    }
-    vector<int> result;
-    unordered_map<char, size_t> s_count;
-    for (const auto &ch : p) {
-      ++s_count[ch];
     }
 
     unordered_map<char, size_t> p_count;
-    for (auto iter = s.cbegin(); iter < s.cbegin() + p.size(); ++iter) {
-      ++p_count[*iter];
+    for (const auto &ch : p) {
+      p_count[ch] += 1;
     }
 
-    for (auto iter = s.cbegin(); iter <= s.cend() - p.size(); ++iter) {
-      if (s_count == p_count) {
-        result.push_back(distance(s.cbegin(), iter));
-      }
-      auto next_iter = iter + p.size();
-      if (next_iter < s.cend()) {
-        if (p_count[*iter] == 1) {
-          p_count.erase(*iter);
-        } else {
-          --p_count[*iter];
+    unordered_map<char, size_t> s_count;
+    vector<int> result;
+    size_t start = 0, end = 0;
+    for (; end < p.size(); ++end) {
+      s_count[s[end]] += 1;
+    }
+
+    auto success = [&p_count, &s_count]() -> bool {
+      for (const auto &[ch, count] : p_count) {
+        if (s_count[ch] != count) {
+          return false;
         }
-        ++p_count[*next_iter];
+      }
+      return true;
+    };
+
+    if (success()) {
+      result.push_back(start);
+    }
+
+    for (; end < s.size(); ++start, ++end) {
+      s_count[s[end]] += 1;
+      s_count[s[start]] -= 1;
+      if (success()) {
+        result.push_back(start + 1);
       }
     }
+
     return result;
   }
 };
