@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <functional>
 #include <memory>
 #include <unordered_map>
 
@@ -12,38 +13,43 @@ public:
   }
 
   int get(int key) {
-    if (!hash_table_.contains(key)) {
+    auto iter = hash_table_.find(key);
+    if (iter == hash_table_.end()) {
       return -1;
     }
 
-    auto &node = *hash_table_[key];
-    moveToFront(node);
+    auto &node = *iter->second;
+    MoveToHead(node);
     return node.value_;
   }
 
   void put(int key, int value) {
     auto iter = hash_table_.find(key);
-    if (iter == hash_table_.end()) {
-      auto new_node = make_unique<ListNode>(key, value);
-      while (static_cast<int>(hash_table_.size()) >= capacity_) {
-        evict();
-      }
-      addToHead(*new_node);
-      hash_table_[key] = std::move(new_node);
-    } else {
+    if (iter != hash_table_.end()) {
+      // exist
       auto &node = *iter->second;
       node.value_ = value;
-      moveToFront(node);
+      MoveToHead(node);
+      return;
     }
+
+    // not exist
+    while (isFull()) {
+      evict();
+    }
+
+    auto node_ptr = make_unique<ListNode>();
+    auto &node = *node_ptr;
+    node.key_ = key;
+    node.value_ = value;
+    hash_table_.emplace(node.key_, std::move(node_ptr));
+    addToHead(node);
   }
 
 private:
   struct ListNode {
-    ListNode() = default;
-    ListNode(int key, int value) : key_(key), value_(value) {}
-
-    int key_ = 0;
-    int value_ = 0;
+    int key_ = -1;
+    int value_ = -1;
     ListNode *previous_ = nullptr;
     ListNode *next_ = nullptr;
   };
@@ -54,21 +60,25 @@ private:
   }
 
   void addToHead(ListNode &node) {
-    node.next_ = head_.next_;
     node.previous_ = &head_;
+    node.next_ = head_.next_;
     head_.next_->previous_ = &node;
     head_.next_ = &node;
   }
 
-  void moveToFront(ListNode &node) {
-    remove(node);
-    addToHead(node);
+  auto isFull() -> bool {
+    return static_cast<int>(hash_table_.size()) >= capacity_;
   }
 
   void evict() {
-    auto &last_node = *tail_.previous_;
-    remove(last_node);
-    hash_table_.erase(last_node.key_);
+    auto node = *tail_.previous_;
+    remove(node);
+    hash_table_.erase(node.key_);
+  }
+
+  void MoveToHead(ListNode &node) {
+    remove(node);
+    addToHead(node);
   }
 
   ListNode head_;

@@ -10,58 +10,40 @@ struct ListNode {
 class Solution {
 public:
   ListNode *addTwoNumbers(ListNode *l1, ListNode *l2) {
-    if (l1 == nullptr) {
-      return l2;
-    }
-    if (l2 == nullptr) {
-      return l1;
-    }
+    ListNode head;
+    auto tail = &head;
+    int carry = false;
+    while (l1 || l2 || carry != 0) {
+      auto new_node = new ListNode();
+      if (l1 && l2) {
+        auto sum = l1->val + l2->val + carry;
+        new_node->val = sum % 10;
+        carry = sum / 10;
 
-    int carry = 0;
-    auto first = l1;
-    auto second = l2;
+        l1 = l1->next;
+        l2 = l2->next;
+      } else if (l1) {
+        auto sum = l1->val + carry;
+        new_node->val = sum % 10;
+        carry = sum / 10;
 
-    while (true) {
-      auto num = first->val + second->val + carry;
-      carry = num / 10;
-      first->val = num % 10;
+        l1 = l1->next;
+      } else if (l2) {
+        auto sum = l2->val + carry;
+        new_node->val = sum % 10;
+        carry = sum / 10;
 
-      if (first->next == nullptr || second->next == nullptr) {
-        break;
+        l2 = l2->next;
       } else {
-        first = first->next;
-        second = second->next;
+        auto sum = carry;
+        new_node->val = sum % 10;
+        carry = sum / 10;
       }
+
+      tail->next = new_node;
+      tail = new_node;
     }
 
-    if (first->next != nullptr) {
-      first = first->next;
-    } else if (second->next != nullptr) {
-      first->next = second->next;
-      first = first->next;
-    } else if (carry != 0) {
-      first->next = new ListNode(carry);
-      return l1;
-    } else {
-      return l1;
-    }
-
-    while (true) {
-      auto num = first->val + carry;
-      carry = num / 10;
-      first->val = num % 10;
-
-      if (first->next == nullptr) {
-        break;
-      } else {
-        first = first->next;
-      }
-    }
-
-    if (carry != 0) {
-      first->next = new ListNode(carry);
-    }
-
-    return l1;
+    return head.next;
   }
 };

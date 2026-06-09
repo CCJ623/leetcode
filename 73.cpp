@@ -1,4 +1,3 @@
-#include <ranges>
 #include <vector>
 
 using namespace std;
@@ -10,31 +9,23 @@ public:
       return;
     }
 
-    vector<bool> is_row_zero(matrix.size(), false);
-    vector<bool> is_column_zero(matrix.front().size(), false);
+    vector<bool> row_zero(matrix.size(), false);
+    vector<bool> col_zero(matrix.front().size(), false);
 
-    for (const auto &[row_index, row] :
-         ranges::views::zip(views::iota(0), matrix)) {
-      for (const auto &[column_index, num] :
-           ranges::views::zip(views::iota(0), row)) {
-        if (num == 0) {
-          is_row_zero[row_index] = true;
-          is_column_zero[column_index] = true;
+    for (size_t row = 0; row < matrix.size(); ++row) {
+      for (size_t col = 0; col < matrix[row].size(); ++col) {
+        if (matrix[row][col] == 0) {
+          row_zero[row] = col_zero[col] = true;
         }
       }
     }
 
-    for (auto [row_index, row] : ranges::views::zip(views::iota(0), matrix)) {
-      for (auto [column_index, num] : ranges::views::zip(views::iota(0), row)) {
-        if (is_row_zero[row_index] || is_column_zero[column_index]) {
-          num = 0;
+    for (size_t row = 0; row < matrix.size(); ++row) {
+      for (size_t col = 0; col < matrix[row].size(); ++col) {
+        if (row_zero[row] || col_zero[col]) {
+          matrix[row][col] = 0;
         }
       }
     }
   }
 };
-
-int main() {
-  vector<vector<int>> matrix = {{1, 1, 1}, {1, 0, 1}, {1, 1, 1}};
-  Solution{}.setZeroes(matrix);
-}

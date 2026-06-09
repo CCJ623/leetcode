@@ -21,15 +21,15 @@ public:
     stack<TreeNode *> stk;
     stk.push(root);
     while (!stk.empty()) {
-      auto node = stk.top();
+      root = stk.top();
       stk.pop();
-      if (node == nullptr) {
+      if (!root) {
         continue;
       }
 
-      result.push_back(node->val);
-      stk.push(node->right);
-      stk.push(node->left);
+      result.push_back(root->val);
+      stk.push(root->right);
+      stk.push(root->left);
     }
 
     return result;

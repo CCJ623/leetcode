@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <queue>
 #include <vector>
 
@@ -13,33 +14,29 @@ struct ListNode {
 class Solution {
 public:
   ListNode *mergeKLists(vector<ListNode *> &lists) {
-    if (lists.empty()) {
-      return nullptr;
-    }
-
-    auto node_comparator = [](ListNode *lhs, ListNode *rhs) {
+    ListNode head;
+    auto tail = &head;
+    auto comparator = [](const ListNode *lhs, const ListNode *rhs) {
       return lhs->val > rhs->val;
     };
-    ListNode dummy_head{0, nullptr};
-    auto tail = &dummy_head;
-    priority_queue<ListNode *, vector<ListNode *>, decltype(node_comparator)>
-        pq;
-    for (auto &node : lists) {
-      if (node != nullptr) {
+    priority_queue<ListNode *, vector<ListNode *>, decltype(comparator)> pq;
+    for (const auto &node : lists) {
+      if (node) {
         pq.push(node);
       }
     }
 
     while (!pq.empty()) {
-      auto node = pq.top();
+      auto node = std::move(pq.top());
       pq.pop();
-      tail->next = node;
-      if (node->next != nullptr) {
+
+      if (node->next) {
         pq.push(node->next);
       }
+      tail->next = node;
       tail = tail->next;
     }
 
-    return dummy_head.next;
+    return head.next;
   }
 };
