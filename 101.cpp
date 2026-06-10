@@ -1,3 +1,4 @@
+#include <queue>
 struct TreeNode {
   int val;
   TreeNode *left;
@@ -10,21 +11,55 @@ struct TreeNode {
 
 class Solution {
 public:
+  // bool isSymmetric(TreeNode *root) {
+  //   if (!root) {
+  //     return false;
+  //   }
+  //   return helper(root->left, root->right);
+  // }
+
   bool isSymmetric(TreeNode *root) {
-    if (root == nullptr) {
-      return true;
+    if (!root) {
+      return false;
     }
-    return helper(root->left, root->right);
+
+    std::queue<TreeNode *> q;
+    q.push(root->left);
+    q.push(root->right);
+    while (!q.empty()) {
+      auto first = q.front();
+      q.pop();
+      auto second = q.front();
+      q.pop();
+
+      if (!first && !second) {
+        continue;
+      }
+      if (first && second) {
+        if (first->val != second->val) {
+          return false;
+        }
+        q.push(first->left);
+        q.push(second->right);
+        q.push(first->right);
+        q.push(second->left);
+        continue;
+      }
+      return false;
+    }
+
+    return true;
   }
 
 private:
   auto helper(TreeNode *left, TreeNode *right) -> bool {
-    if (left == nullptr && right == nullptr) {
+    if (!left && !right) {
       return true;
     }
-    if (left == nullptr || right == nullptr || left->val != right->val) {
-      return false;
+    if (left && right) {
+      return left->val == right->val && helper(left->left, right->right) &&
+             helper(left->right, right->left);
     }
-    return helper(left->left, right->right) && helper(left->right, right->left);
+    return false;
   }
 };

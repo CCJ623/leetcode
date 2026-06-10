@@ -16,31 +16,28 @@ struct TreeNode {
 class Solution {
 public:
   vector<vector<int>> levelOrder(TreeNode *root) {
-    if (root == nullptr) {
-      return {};
-    }
-
     vector<vector<int>> result;
-    queue<TreeNode *> current_queue;
-    queue<TreeNode *> next_queue;
-    next_queue.push(root);
-    while (!next_queue.empty()) {
-      swap(current_queue, next_queue);
-      vector<int> level_result;
-      while (!current_queue.empty()) {
-        auto node = current_queue.front();
-        current_queue.pop();
-        level_result.push_back(node->val);
-        if (node->left != nullptr) {
-          next_queue.push(node->left);
+    queue<TreeNode *> q;
+    q.push(root);
+    while (!q.empty()) {
+      vector<int> level;
+      auto count = q.size();
+      for (size_t i = 0; i < count; ++i) {
+        auto node = q.front();
+        q.pop();
+        if (!node) {
+          continue;
         }
-        if (node->right != nullptr) {
-          next_queue.push(node->right);
-        }
+        level.push_back(node->val);
+        q.push(node->left);
+        q.push(node->right);
       }
 
-      result.push_back(std::move(level_result));
+      if (!level.empty()) {
+        result.push_back(std::move(level));
+      }
     }
+
     return result;
   }
 };

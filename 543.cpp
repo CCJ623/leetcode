@@ -16,19 +16,20 @@ class Solution {
 public:
   int diameterOfBinaryTree(TreeNode *root) {
     maxDepth(root);
-    return max_path_length;
+    return max_path_length_;
   }
 
 private:
   int maxDepth(TreeNode *root) {
-    if (root == nullptr) {
+    if (!root) {
       return 0;
     }
+
     auto left_max = maxDepth(root->left);
     auto right_max = maxDepth(root->right);
-    max_path_length = max(max_path_length, left_max + right_max);
+    max_path_length_ = max(max_path_length_, left_max + right_max);
     return max(left_max, right_max) + 1;
   }
 
-  int max_path_length = 0;
+  int max_path_length_ = 0;
 };

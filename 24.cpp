@@ -10,19 +10,27 @@ struct ListNode {
 class Solution {
 public:
   ListNode *swapPairs(ListNode *head) {
-
-    ListNode my_head{0, head};
-    auto previous = &my_head;
-    while (previous->next != nullptr && previous->next->next != nullptr) {
-      auto first = previous->next;
-      auto second = first->next;
-
-      first->next = second->next;
-      second->next = first;
-      previous->next = second;
-      previous = first;
+    if (!head) {
+      return nullptr;
     }
 
-    return my_head.next;
+    ListNode dummy_head(0, head);
+    auto previous = &dummy_head;
+
+    for (auto first = head, second = first->next; second;) {
+      auto next_node = second->next;
+      second->next = first;
+      first->next = next_node;
+      previous->next = second;
+
+      if (!next_node) {
+        break;
+      }
+      previous = first;
+      first = next_node;
+      second = first->next;
+    }
+
+    return dummy_head.next;
   }
 };

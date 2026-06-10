@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <span>
 #include <vector>
 
@@ -15,19 +16,18 @@ struct TreeNode {
 
 class Solution {
 public:
-  TreeNode *sortedArrayToBST(vector<int> &nums) { return build(nums); }
+  TreeNode *sortedArrayToBST(vector<int> &nums) {
+    return build(nums, 0, nums.size());
+  }
 
 private:
-  auto build(span<const int> nums) -> TreeNode * {
-    if (nums.empty()) {
+  auto build(const vector<int> &nums, size_t begin, size_t end) -> TreeNode * {
+    if (begin == end) {
       return nullptr;
     }
-    if (nums.size() == 1) {
-      return new TreeNode(nums.front(), nullptr, nullptr);
-    }
 
-    auto mid_index = nums.size() / 2;
-    return new TreeNode(nums[mid_index], build(nums.subspan(0, mid_index)),
-                        build(nums.subspan(mid_index + 1)));
+    auto mid_index = begin + (end - begin) / 2;
+    return new TreeNode(nums[mid_index], build(nums, begin, mid_index),
+                        build(nums, mid_index + 1, end));
   }
 };

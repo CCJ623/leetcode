@@ -26,8 +26,8 @@ public:
       if (!root) {
         continue;
       }
-
       result.push_back(root->val);
+
       stk.push(root->right);
       stk.push(root->left);
     }

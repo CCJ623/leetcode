@@ -15,13 +15,12 @@ struct TreeNode {
 class Solution {
 public:
   TreeNode *invertTree(TreeNode *root) {
-    if (root == nullptr) {
+    if (!root) {
       return nullptr;
     }
+    swap(root->left, root->right);
     invertTree(root->left);
     invertTree(root->right);
-    swap(root->left, root->right);
-
     return root;
   }
 };

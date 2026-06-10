@@ -28,8 +28,8 @@ public:
 
       root = stk.top();
       if (root->right == previous || !root->right) {
-        stk.pop();
         result.push_back(root->val);
+        stk.pop();
         previous = root;
         root = nullptr;
       } else {

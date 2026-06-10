@@ -13,13 +13,9 @@ struct ListNode {
 class Solution {
 public:
   bool isPalindrome(ListNode *head) {
-    if (head == nullptr) {
-      return false;
-    }
-
     vector<int> v;
-    for (auto ptr = head; ptr != nullptr; ptr = ptr->next) {
-      v.push_back(ptr->val);
+    for (auto node = head; node; node = node->next) {
+      v.push_back(node->val);
     }
 
     for (size_t left = 0, right = v.size() - 1; left < right; ++left, --right) {

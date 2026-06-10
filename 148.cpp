@@ -1,5 +1,6 @@
 
 #include <cstddef>
+#include <functional>
 using namespace std;
 
 struct ListNode {
@@ -13,57 +14,40 @@ struct ListNode {
 class Solution {
 public:
   ListNode *sortList(ListNode *head) {
-    if (head == nullptr || head->next == nullptr) {
+    if (!head || !head->next) {
       return head;
     }
 
-    auto mid = getMid(head);
-    auto left = head;
-    auto right = mid->next;
-    mid->next = nullptr;
-    return merge(sortList(left), sortList(right));
-  }
-
-private:
-  auto getMid(ListNode *head) -> ListNode * {
     auto slow = head;
-    auto fast = slow->next;
+    auto fast = head;
+    for (; fast->next && fast->next->next;
+         slow = slow->next, fast = fast->next->next)
+      ;
 
-    for (; fast != nullptr && fast->next != nullptr;) {
-      slow = slow->next;
-      fast = fast->next->next;
+    auto left = head;
+    auto right = slow->next;
+    slow->next = nullptr;
+
+    left = sortList(left);
+    right = sortList(right);
+
+    ListNode dummy_head;
+    auto previous = &dummy_head;
+    for (; left || right;) {
+      reference_wrapper<ListNode *> target = left;
+      if (left && right) {
+        target = (left->val < right->val ? left : right);
+      } else if (left) {
+        target = left;
+      } else {
+        target = right;
+      }
+
+      previous->next = target;
+      previous = previous->next;
+      target.get() = target.get()->next;
     }
 
-    return slow;
-  }
-
-  auto merge(ListNode *first, ListNode *second) -> ListNode * {
-    ListNode dummy_head{0, nullptr};
-    auto tail = &dummy_head;
-    for (;;) {
-      if (first == nullptr && second == nullptr) {
-        return dummy_head.next;
-      }
-
-      if (first != nullptr && second != nullptr) {
-        if (first->val < second->val) {
-          tail->next = first;
-          first = first->next;
-        } else {
-          tail->next = second;
-          second = second->next;
-        }
-        tail = tail->next;
-        continue;
-      }
-
-      if (first != nullptr) {
-        tail->next = first;
-        return dummy_head.next;
-      }
-
-      tail->next = second;
-      return dummy_head.next;
-    }
+    return dummy_head.next;
   }
 };
